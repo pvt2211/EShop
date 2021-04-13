@@ -14,7 +14,7 @@
             </div>
             <div class="form-button delete-dialog-button">
                 <div class="form-button-right">
-                    <div class="button-common button-support button-delete">
+                    <div @click="deleteOnClick" class="button-common button-support button-delete">
                         <font-awesome-icon :icon="['fas', 'save']" class="button-icon"/>
                         <div class="button-text">Xóa</div>
                     </div>
@@ -34,6 +34,10 @@ export default {
         closeOnClick() {
             this.$emit('handleClose');
         },
+
+        deleteOnClick() {
+            this.$emit('handleConfirmDelete')
+        }
     }
 }
 </script>

@@ -4,19 +4,19 @@
             <font-awesome-icon :icon="['fas', 'plus']" class="button-icon"/>
             <div class="button-text">Thêm mới</div>
         </div>
-        <div class="button-common border-black-left">
+        <div class="button-common border-black-left" @click="duplicateOnClick">
             <font-awesome-icon :icon="['fas', 'clone']" class="button-icon"/>
             <div class="button-text">Nhân bản</div>
         </div>
-        <div class="button-common border-black-left">
+        <div class="button-common border-black-left" @click="editOnClick">
             <font-awesome-icon :icon="['fas', 'pencil-alt']" class="button-icon"/>
             <div class="button-text">Sửa</div>
         </div>
-        <div @click="deleteOnClick" class="button-common border-black-left">
+        <div  @click="deleteOnClick" class="button-common border-black-left">
             <font-awesome-icon :icon="['fas', 'trash']" class="button-icon"/>
             <div class="button-text">Xóa</div>
         </div>
-        <div class="button-common border-black-left">
+        <div @click="reloadOnClick" class="button-common border-black-left">
             <font-awesome-icon :icon="['fas', 'sync-alt']" class="button-icon"/>
             <div class="button-text">Nạp</div>
         </div>
@@ -32,6 +32,18 @@ export default {
 
         deleteOnClick() {
             this.$emit('handleDelete');
+        },
+
+        reloadOnClick() {
+            this.$emit('handleReload');
+        },
+
+        duplicateOnClick() {
+            this.$emit('handleDuplicate');
+        },
+
+        editOnClick() {
+            this.$emit('handleEdit');
         },
     }
 }

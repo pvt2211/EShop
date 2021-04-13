@@ -46,7 +46,6 @@ export default {
 
   data() {
     return {
-      entitiesSelect:this.entities,
     }
   },
 
