@@ -1,6 +1,7 @@
 <template>
   <div class="store-container">
     <ButtonBar
+      :selectEntities="selectStores"
       @handleDuplicate="handleDuplicate"
       @handleEdit="handleEdit"
       @handleReload="handleReload"
@@ -46,7 +47,12 @@
       </table>
     </div>
 
-    <StoreDetail :store="store" @handleClose="handleClose" v-if="detailShow" />
+    <StoreDetail
+      :store="store"
+      @handleSave="handleSave"
+      @handleClose="handleClose"
+      v-if="detailShow"
+    />
 
     <DeleteDialog
       @handleConfirmDelete="handleConfirmDelete"
@@ -75,11 +81,13 @@ export default {
   data() {
     return {
       store: {},
-      detailShow: false,
-      selectStores: [],
-      deleteShow: false,
       stores: [],
+      selectStores: [],
+      dynamicMethod: "",
+      dynamicLink: "",
       urlLink: "https://localhost:44399/api/v1/Stores",
+      detailShow: false,
+      deleteShow: false,
       storeDisplays: [
         {
           PropertyName: "StoreCode",
@@ -155,23 +163,66 @@ export default {
     },
 
     handleAdd() {
+      this.store = {};
+      this.resetSelect();
       this.detailShow = true;
+      this.dynamicMethod = "post";
     },
 
-    handleReload() {},
+    handleReload() {
+      this.getData();
+      this.resetSelect();
+    },
 
-    handleEdit() {},
+    handleEdit() {
+      this.detailShow = true;
+      this.dynamicMethod = "put";
+    },
 
     handleDuplicate() {},
 
+    handleSave() {
+      var urlLink = "";
+      if (this.dynamicMethod == "put") {
+        urlLink = this.urlLink + "/" + this.store.StoreId;
+      } else {
+        urlLink = this.urlLink;
+      }
+      axios({
+        method: this.dynamicMethod,
+        url: urlLink,
+        data: this.store,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then(() => {
+          this.getData();
+          this.resetSelect();
+          this.detailShow = false;
+        })
+        .catch((res) => {
+          console.log(res);
+        });
+    },
+
     handleConfirmDelete() {
-      // if (this.selectStores.length > 1) {
-        
-      // }
-      // axios({
-      //   method: "delete",
-      //   url: this.urlLink + '/' + ,
-      // })
+      if (this.selectStores.length >= 1) {
+        this.selectStores.forEach((selectStore) => {
+          axios({
+            method: "delete",
+            url: this.urlLink + "/" + selectStore.StoreId,
+          })
+            .then(() => {
+              this.getData();
+              this.resetSelect();
+              this.deleteShow = false;
+            })
+            .catch((res) => {
+              console.log(res);
+            });
+        });
+      }
     },
 
     handleClose() {
@@ -192,6 +243,20 @@ export default {
       }
       this.stores[index].isSelect = !this.stores[index].isSelect;
       this.store = store;
+    },
+
+    resetSelect() {
+      this.selectStores = [];
+      this.getTrs.forEach((tr) => {
+        tr.classList.remove("is-select");
+      });
+    },
+  },
+
+  computed: {
+    getTrs() {
+      var trs = document.getElementsByClassName("table-tr");
+      return trs;
     },
   },
 

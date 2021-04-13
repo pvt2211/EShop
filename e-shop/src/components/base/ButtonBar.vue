@@ -12,7 +12,7 @@
             <font-awesome-icon :icon="['fas', 'pencil-alt']" class="button-icon"/>
             <div class="button-text">Sửa</div>
         </div>
-        <div  @click="deleteOnClick" class="button-common border-black-left">
+        <div :disabled="deleteDisable" @click="deleteOnClick" class="button-common border-black-left">
             <font-awesome-icon :icon="['fas', 'trash']" class="button-icon"/>
             <div class="button-text">Xóa</div>
         </div>
@@ -25,6 +25,16 @@
 
 <script>
 export default {
+    props: {
+        selectEntities:Array,
+    },
+
+    data() {
+        return {
+
+        }
+    },
+
     methods: {
         addOnClick() {
             this.$emit('handleAdd');
@@ -45,6 +55,20 @@ export default {
         editOnClick() {
             this.$emit('handleEdit');
         },
+    },
+
+    computed: {
+        deleteDisable() {
+            if (this.selectEntities == null) {
+                return true;
+            } 
+            else if (this.selectEntities.length < 1) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
     }
 }
 </script>
