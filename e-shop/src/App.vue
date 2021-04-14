@@ -27,7 +27,8 @@ export default {
 body {
   font-family: Roboto, Tahoma, sans-serif;
   font-size: 13px;
-  color: #404040;
+  color: #212121;
+  margin: 0;
 }
 
 .main-containter {

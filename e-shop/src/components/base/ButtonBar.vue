@@ -1,25 +1,25 @@
 <template>
     <div class="button-bar">
-        <div class="button-common" style="border:none;" @click="addOnClick">
+        <button class="button-common" style="border:none;" @click="addOnClick">
             <font-awesome-icon :icon="['fas', 'plus']" class="button-icon"/>
             <div class="button-text">Thêm mới</div>
-        </div>
-        <div class="button-common border-black-left" @click="duplicateOnClick">
+        </button>
+        <button :disabled="editDisable" class="button-common border-black-left" @click="duplicateOnClick">
             <font-awesome-icon :icon="['fas', 'clone']" class="button-icon"/>
             <div class="button-text">Nhân bản</div>
-        </div>
-        <div class="button-common border-black-left" @click="editOnClick">
+        </button>
+        <button :disabled="editDisable" class="button-common border-black-left" @click="editOnClick">
             <font-awesome-icon :icon="['fas', 'pencil-alt']" class="button-icon"/>
             <div class="button-text">Sửa</div>
-        </div>
-        <div :disabled="deleteDisable" @click="deleteOnClick" class="button-common border-black-left">
+        </button>
+        <button :disabled="deleteDisable" @click="deleteOnClick" class="button-common border-black-left">
             <font-awesome-icon :icon="['fas', 'trash']" class="button-icon"/>
             <div class="button-text">Xóa</div>
-        </div>
-        <div @click="reloadOnClick" class="button-common border-black-left">
+        </button>
+        <button @click="reloadOnClick" class="button-common border-black-left">
             <font-awesome-icon :icon="['fas', 'sync-alt']" class="button-icon"/>
             <div class="button-text">Nạp</div>
-        </div>
+        </button>
     </div>
 </template>
 
@@ -31,7 +31,6 @@ export default {
 
     data() {
         return {
-
         }
     },
 
@@ -62,11 +61,23 @@ export default {
             if (this.selectEntities == null) {
                 return true;
             } 
-            else if (this.selectEntities.length < 1) {
+            else if (this.selectEntities.length == 0) {
                 return true;
             }
             else {
                 return false;
+            }
+        },
+
+        editDisable() {
+            if (this.selectEntities == null) {
+                return true;
+            } 
+            else if (this.selectEntities.length == 1) {
+                return false;
+            }
+            else {
+                return true;
             }
         }
     }
@@ -76,11 +87,10 @@ export default {
 <style scoped>
 
 .button-bar {
-    background-color: #026b97;
+    background-color: #2b3173;
     color:#ffffff;
     height: 36px;
     display: flex;
     align-items: center;
 }
-
 </style>

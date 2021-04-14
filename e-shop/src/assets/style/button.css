@@ -12,14 +12,17 @@
     height: 100%;
     cursor: pointer;
     transition: 0.3s;
+    background-color: inherit;
+    color: white;
+    border: none;
   }
   
   .button-common:hover {
-    background-color: #0088c1;
+    background-color: #6b6f9d;
   }
   
   .button-common:active {
-    background-color: #00577b;
+    background-color: #1e235a;
   }
   
     .button-common .button-icon {
@@ -31,18 +34,18 @@
   
   .button-support {
     padding: 0 10px;
-    color: #026b97;
+    color: #2b3173;
     border-radius: 4px;
     margin-right: 10px;
   }
   
   .button-support:hover {
     color: #ffffff;
-    background-color: #0088c1;
+    background-color: #6b6f9d;
   }
   
   .button-support:active {
-    background-color: #00577b;
+    background-color: #1e235a;
   
   }
   
@@ -52,17 +55,17 @@
   
   .button-save {
     color: white;
-    background-color: #026b97;
+    background-color: #2b3173;
     border: none;
   }
   
   .button-delete {
     color: white;
-    background-color: #eb7728;
+    background-color: #df4646;
     border: none;
   }
 
   .button-delete:hover {
-      background-color: #eb7728;
+      background-color: #df4646;
   }
   /* --------------------------------------------------------------------- */

@@ -181,7 +181,7 @@ export default {
 
     handleDuplicate() {},
 
-    handleSave() {
+    handleSave(saveAndAddState) {
       var urlLink = "";
       if (this.dynamicMethod == "put") {
         urlLink = this.urlLink + "/" + this.store.StoreId;
@@ -197,9 +197,11 @@ export default {
         },
       })
         .then(() => {
-          this.getData();
-          this.resetSelect();
-          this.detailShow = false;
+          if (saveAndAddState == false) {
+            this.resetSelect();
+            this.detailShow = false;
+          }
+            this.getData();
         })
         .catch((res) => {
           console.log(res);
@@ -313,11 +315,11 @@ export default {
 }
 
 .table-tr:nth-child(even) {
-  background-color: #ccc;
+  background-color: #f6f6f6;
 }
 
 .table-tr:hover {
-  background-color: #d1f1ff;
+  background-color: #eaeff4;
 }
 
 .th-thread .colum-container {
@@ -334,12 +336,13 @@ export default {
 .th-thread .colum-container .table-filter {
   display: flex;
   border-top: 1px solid #ccc;
+  width: 100%;
 }
 .th-thread .colum-container .table-filter .filter-criteria {
   background-color: #ffffff;
   text-align: center;
   height: 100%;
-  width: 32px;
+  min-width: 31px;
   border-right: 1px solid #ccc;
   /* border-top: 1px solid #ccc; */
   line-height: 32px;
@@ -350,7 +353,7 @@ export default {
 
 .th-thread .colum-container .table-filter .filter-text {
   padding: 0px;
-  width: 100%;
+  width: calc(100% - 32px);
   outline: none;
   border: none;
   /* border-top: 1px solid #ccc; */
@@ -358,7 +361,7 @@ export default {
 }
 
 .is-select {
-  background-color: #c3ecff !important;
+  background-color: #e2e4f1 !important;
 }
 /* ------------------------------------------------------- */
 </style>>

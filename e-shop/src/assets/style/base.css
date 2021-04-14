@@ -10,7 +10,7 @@
 }
 
 .active-bgcolor {
-    background-color: #00577b;
+    background-color: #1e235a;
 }
 
 h1 {
@@ -26,14 +26,18 @@ h1 {
 }
 
 .border-black-left {
-  border-left: 1px solid #000000;
+  border-left: 1px solid #000000!important;
 }
 
 .border-primary {
-  border: 1px solid #026b97;
+  border: 1px solid #2b3173;
 }
 
 
+
+.blur {
+  border-color: red!important;
+}
 @font-face {
     font-family: "Roboto-Black";
     src: url("../font/Roboto-Black.ttf") format("opentype");
