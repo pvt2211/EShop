@@ -5,7 +5,7 @@
     cursor: pointer;
   }
   
-  .button-common {
+  .common-btn {
     display: flex;
     align-items: center;
     padding: 0 7px;
@@ -15,57 +15,182 @@
     background-color: inherit;
     color: white;
     border: none;
+    outline: none;
+    font-size: 13;
+    font-family: roboto, Tahoma, sans-serif;
   }
   
-  .button-common:hover {
+  .common-btn:hover {
     background-color: #6b6f9d;
   }
   
-  .button-common:active {
+  .common-btn:active {
     background-color: #1e235a;
   }
   
-    .button-common .button-icon {
+    .btn-icon {
         margin-right: 3px;
+        background-image: url("../img/common-icon.png");
+        background-repeat: no-repeat;
+        width: 16px;
+        height: 16px;
     }
-    .button-common .button-text {
+
+    .add-icon {
+      background-position: -1px -127px;
+    }
+
+    .dup-icon {
+      background-position: -976px -127px;
+    }
+
+    .edit-icon {
+      background-position: -77px -203px;
+    }
+
+    .delete-icon {
+      background-position: -1076px -127px;
+    }
+
+    .support-icon {
+      background-position: 4px 1px;
+      background-image: url("../img/help.png");
+    }
+    
+    .save-icon {
+      background-position: -327px -127px;
+    }
+
+    .save-add-icon {
+      background-position: -26px -127px;
+    }
+
+    .cancel-icon {
+      background-position: -252px -127px;
+    }
+
+    .reload-icon {
+      background-position: -876px -127px;
+    }
+
+    .first-icon {
+      background-position: -650px -127px;
+    }
+
+    .back-icon {
+      background-position: -702px -127px;
+    }
+
+    .next-icon {
+      background-position: -749px -127px;
+    }
+
+    .last-icon {
+      background-position: -800px -127px;
+    }
+
+    .confirm-delete-icon {
+      background-position: -800px -127px;
+    }
+
+    .common-btn .button-text {
         padding: 0 5px;
+        font-size: 13px;
+    }
+
+    .paging-reload-icon {
+      background-position: -852px -126px;
     }
   
-  .button-support {
-    padding: 0 10px;
+  .btn-support {
+    color: #1e235a;
+    font-weight: bold;
+    border-radius: 4px;
+    text-decoration: none;
+  }
+
+  .btn-support:hover {
+    background-color: #eaeff4;
+  }
+
+  .btn-support:active {
+    border: 1px solid #1e235a;
+  }
+
+  .btn-save {
+    background-color: #2b3173;
+    color: #ffffff;
+    border-radius: 4px;
+    margin-right: 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .btn-save:hover {
+    color: #ffffff;
+  }
+  
+  .btn-save:active {
+    background-color: #1e235a;
+    color: #ffffff;
+  }
+
+  .btn-save-add {
+    background-color: inherit;
+    border: 1px solid #2b3173;
     color: #2b3173;
     border-radius: 4px;
     margin-right: 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .btn-save-add:hover {
+    color: #6b6f9d;
+    background-color: inherit;
+  }
+
+  .btn-save-add:active {
+    color: #2b3173;
+  }
+
+  .btn-cancel {
+    background-color: inherit;
+    border: 1px solid #ffffff;
+    color: #2b3173;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .btn-cancel:hover {
+    border: 1px solid #2b3173;
+    background-color: inherit;
+  }
+
+  .btn-cancel-2:hover {
+    border-color: #ffffff;
   }
   
-  .button-support:hover {
-    color: #ffffff;
-    background-color: #6b6f9d;
-  }
-  
-  .button-support:active {
-    background-color: #1e235a;
-  
-  }
-  
-  .button-support .button-icon {
-    font-size: 16px;
-  }
-  
-  .button-save {
-    color: white;
-    background-color: #2b3173;
-    border: none;
-  }
-  
-  .button-delete {
+  .btn-confirm-delete {
     color: white;
     background-color: #df4646;
     border: none;
+    padding-right: 18px;
+    font-weight: 700;
+    border-radius: 3px;
   }
 
-  .button-delete:hover {
+  .btn-confirm-delete:hover {
       background-color: #df4646;
+  }
+  
+  .is-disable {
+    opacity: 0.5;
+    cursor: inherit;
+  }
+
+  .is-disable:hover{
+    background-color: inherit;
   }
   /* --------------------------------------------------------------------- */

@@ -1,3 +1,10 @@
+body {
+  font-family: roboto, Tahoma, sans-serif;
+  font-size: 13px;
+  color: #212121;
+  margin: 0;
+}
+
 .default-img {
     background-repeat: no-repeat;
     background-size: contain;
@@ -25,15 +32,17 @@ h1 {
   margin-right: 15px;
 }
 
-.border-black-left {
-  border-left: 1px solid #000000!important;
+.button-bar-border {
+  border-left: 1px solid #190472!important;
 }
 
 .border-primary {
   border: 1px solid #2b3173;
 }
 
-
+.primary-background {
+  background-color: #2b3173;
+}
 
 .blur {
   border-color: red!important;

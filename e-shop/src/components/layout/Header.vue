@@ -1,19 +1,20 @@
 <template>
   <div class="header">
-    <h1 class="header-title">Cửa hàng</h1>
+    <label class="header-title">Cửa hàng</label>
     <div class="right-header">
-      <select name="headerSelect" class="select-header">
-        <option value="volvo">Kho tổng</option>
-        <option value="saab">Kho phụ</option>
-      </select>
+      <div class="select-header">
+        <input class="header-input" type="text" value="K2">
+        <div class="select-header-arrow"></div>
+      </div>
       <div class="header-avartar">
         <img class="default-img" src="../../assets/img/Avartar.png" />
       </div>
-      <select name="headerSelect" class="user">
-        <option value="volvo">Nguyễn Văn Mạnh</option>
-      </select>
-      <div class="support-page-btn active-bgcolor"></div>
-      <div class="header-btn" style="border-right: 1px solid #ccc">
+      <div class="user">
+        <div class="user-name">Nguyễn Văn Mạnh</div>
+        <div class="select-header-arrow"></div>
+      </div>
+      <div class="support-page-btn primary-background"></div>
+      <div class="header-btn" style="border-right: 1px solid #e9e9e9">
         <font-awesome-icon :icon="['fas', 'bell']" />
       </div>
       <div class="header-btn">
@@ -29,7 +30,7 @@ export default {};
 
 <style scoped>
 .header {
-  padding-left: 24px;
+  padding-left: 21px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -37,7 +38,9 @@ export default {};
 }
 
 .header-title {
+  font-size: 18px!important;
   font-weight: 700;
+  color: #212121
 }
 
 .right-header {
@@ -46,41 +49,64 @@ export default {};
 }
 
 .right-header .select-header {
-  padding: 6px 42px;
   outline: none;
-  border: 1px solid #ccc;
+  border: 1px solid #e9e9e9;
   text-align: center;
-  font-size: 13px;
-  font-family: Roboto, Tahoma, sans-serif;
-  font-weight: bold;
+  font-family: roboto, Tahoma, sans-serif;
   border-radius: 3px;
   margin-right: 16px;
+  height: 33px;
   cursor: pointer;
+  min-width: 198px;
+  display: flex;
+  align-items: center;
+}
+
+.right-header .select-header:focus-within{
+  border-color: blue;
+}
+
+.right-header .select-header .header-input {
+  outline: none;
+  border: none;
+  padding: 5px 1px 4px 8px;
+  font-weight: 400;
+  font-size: 13px;
+  font-family: roboto, Tahoma, sans-serif;
+  width: 100%;
+}
+
+.select-header-arrow {
+  background-image: url("../../assets/img/arrow-down-line.png");
+  background-repeat: no-repeat;
+  background-position: 8px;
+  height: 100%;
+  min-width: 24px;
 }
 
 .right-header .header-avartar {
   width: 28px;
   height: 28px;
-  margin-right: 10px;
+  margin-right: 6px;
   cursor: pointer;
 }
 
 .right-header .user {
-  padding-right: 16px;
   outline: none;
-  border: none;
   text-align: center;
-  font-size: 13px;
-  font-family: Roboto, Tahoma, sans-serif;
-  font-weight: bold;
+  font-family: roboto, Tahoma, sans-serif;
+  margin-right: 16px;
+  font-weight: 700;
+  height: 33px;
   cursor: pointer;
-  margin-right: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .right-header .header-btn,
 .support-page-btn {
   font-size: 18px;
-  color: #1e235a;
+  color: #2b3173;
   height: 52px;
   width: 46px;
   display: flex;
@@ -95,7 +121,7 @@ export default {};
 }
 
 .right-header .header-btn:hover {
-  color: #6b6f9d;
+  color: #5897ce;
 }
 
 .right-header .support-page-btn {

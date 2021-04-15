@@ -55,6 +55,7 @@ export default {
   height: 52px;
   width: 100%;
   background-color: #1e235a;
+  padding-top: 1px;
 }
 
 .navbar .nav-item {

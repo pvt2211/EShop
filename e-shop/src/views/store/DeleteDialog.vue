@@ -8,19 +8,19 @@
             </div>
             <div class="delte-dialog-content">
                 <div class="delete-notify">
-                        <font-awesome-icon :icon="['fas', 'question-circle']" class="button-icon"/>
+                    
                 </div>
-                <div class="delete-text">Bạn có chắc chắn muốn xóa abc khỏi danh sách cửa hàng.</div>
+                <div class="delete-text">Bạn có chắc chắn muốn xóa <span v-bind:class="{'is-bold':isBold}">{{ entityDelete }}</span> khỏi danh sách cửa hàng.</div>
             </div>
             <div class="form-button delete-dialog-button">
                 <div class="form-button-right">
-                    <div @click="deleteOnClick" class="button-common button-support button-delete">
-                        <font-awesome-icon :icon="['fas', 'save']" class="button-icon"/>
+                    <div @click="deleteOnClick" class="common-btn btn-confirm-delete">
+                        <div class="btn-icon delete-icon"></div>
                         <div class="button-text">Xóa</div>
                     </div>
-                    <div @click="closeOnClick" class="button-common button-support">
-                        <font-awesome-icon :icon="['fas', 'times']" class="button-icon"/>
-                        <div class="button-text">Hủy</div>
+                    <div @click="closeOnClick" class="common-btn btn-cancel btn-cancel-2">
+                        <div class="btn-icon cancel-icon"></div>
+                        <div class="button-text">Hủy bỏ</div>
                     </div>
                 </div>
             </div>
@@ -30,6 +30,9 @@
 
 <script>
 export default {
+    props: {
+        selectStores:Array,
+    },
     methods: {
         closeOnClick() {
             this.$emit('handleClose');
@@ -38,14 +41,33 @@ export default {
         deleteOnClick() {
             this.$emit('handleConfirmDelete')
         }
-    }
+    },
+
+    computed: {
+        entityDelete() {
+            if (this.selectStores.length == 1) {
+                return this.selectStores[0].StoreCode;
+            } else {
+                return "các cửa hàng đã chọn";
+            }
+        },
+
+        isBold() {
+            if (this.selectStores.length == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    },
+
 }
 </script>
 
 <style scoped>
 .delete-dialog-container {
     width: 400px;
-    border:1px solid #ccc;
+    border:1px solid #e9e9e9;
     border-radius: 4px;
     background-color: #ffffff;
     z-index: 999;
@@ -62,15 +84,19 @@ export default {
 .delete-notify {
     line-height: 44px;
     height: 100%;
-    width: 44px;
-    font-size: 44px;
+    min-width: 44px;
     background-color:white;
     color: #6b6f9d;
     margin-right: 16px;
+    background: url("../../assets/img/icon-popup.png") no-repeat -165px -2px;
 }
 
 .delete-dialog-button {
     justify-content: flex-end;
     padding: 6px;
+}
+
+.is-bold {
+    font-weight: bold;
 }
 </style>

@@ -29,6 +29,14 @@
               <input type="text" class="filter-text" />
             </div>
           </th>
+          <th class="colum-container store-status">
+            <div class="table-colum-title">Trạng thái</div>
+            <input
+              type="text"
+              class="filter-text status-filter"
+              value="Tất cả"
+            />
+          </th>
         </tr>
         <tr
           class="table-tr"
@@ -43,18 +51,23 @@
           >
             {{ store[storeDisplay.PropertyName] }}
           </td>
+          <td class="table-row">
+            {{ store.Status | filterStatus(store.Status) }}
+          </td>
         </tr>
       </table>
     </div>
 
     <StoreDetail
-      :store="store"
+      :selectStores="selectStores"
+      @handleSaveAndAdd="handleSaveAndAdd"
       @handleSave="handleSave"
       @handleClose="handleClose"
       v-if="detailShow"
     />
 
     <DeleteDialog
+      :selectStores="selectStores"
       @handleConfirmDelete="handleConfirmDelete"
       @handleClose="handleClose"
       v-if="deleteShow"
@@ -80,7 +93,6 @@ export default {
 
   data() {
     return {
-      store: {},
       stores: [],
       selectStores: [],
       dynamicMethod: "",
@@ -92,8 +104,8 @@ export default {
         {
           PropertyName: "StoreCode",
           DisplayName: "Mã cửa hàng",
-          MinWidth: "199px",
-          Width: "199px",
+          MinWidth: "149px",
+          Width: "149px",
           TextAlign: "left",
           FilterCriteria: "*",
           CriteriaState: "false",
@@ -119,17 +131,8 @@ export default {
         {
           PropertyName: "PhoneNumber",
           DisplayName: "Số điện thoại",
-          MinWidth: "149px",
-          Width: "149px",
-          TextAlign: "left",
-          FilterCriteria: "*",
-          CriteriaState: "false",
-        },
-        {
-          PropertyName: "Status",
-          DisplayName: "Trạng thái",
-          MinWidth: "199px",
-          Width: "199px",
+          MinWidth: "129px",
+          Width: "129px",
           TextAlign: "left",
           FilterCriteria: "*",
           CriteriaState: "false",
@@ -163,7 +166,6 @@ export default {
     },
 
     handleAdd() {
-      this.store = {};
       this.resetSelect();
       this.detailShow = true;
       this.dynamicMethod = "post";
@@ -181,31 +183,57 @@ export default {
 
     handleDuplicate() {},
 
-    handleSave(saveAndAddState) {
+    handleSave(store, saveAndAddState) {
       var urlLink = "";
       if (this.dynamicMethod == "put") {
-        urlLink = this.urlLink + "/" + this.store.StoreId;
+        urlLink = this.urlLink + "/" + this.selectStores[0].StoreId;
       } else {
         urlLink = this.urlLink;
       }
       axios({
         method: this.dynamicMethod,
         url: urlLink,
-        data: this.store,
+        data: store,
         headers: {
           "Content-Type": "application/json",
         },
       })
         .then(() => {
+          this.getData();
+          this.resetSelect();
           if (saveAndAddState == false) {
-            this.resetSelect();
             this.detailShow = false;
+          } else {
+            this.dynamicMethod = "post";
           }
-            this.getData();
         })
         .catch((res) => {
           console.log(res);
         });
+    },
+
+    handleSaveAndAdd(store) {
+      var urlLink = "";
+      if (this.dynamicMethod == "put") {
+        urlLink = this.urlLink + "/" + this.selectStores[0].StoreId;
+      } else {
+        urlLink = this.urlLink;
+      }
+      axios({
+        method: this.dynamicMethod,
+        url: urlLink,
+        data: store,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(() => {
+        this.getData();
+        this.resetSelect();
+      })
+      .catch((res) => {
+        console.log(res);
+      });
     },
 
     handleConfirmDelete() {
@@ -265,6 +293,16 @@ export default {
   created() {
     this.getData();
   },
+
+  filters: {
+    filterStatus(param) {
+      if (param == 1) {
+        return "Đang hoạt động";
+      } else {
+        return "Ngừng hoạt động";
+      }
+    },
+  },
 };
 </script>
 
@@ -280,7 +318,7 @@ export default {
   background-color: #ffffff;
   width: 100%;
   height: calc(100% - 90px);
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #e9e9e9;
   overflow: auto;
 }
 
@@ -291,8 +329,8 @@ export default {
 }
 
 .table .table-row {
-  border-right: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #e9e9e9;
+  border-bottom: 1px solid #e9e9e9;
   height: 18px;
   padding: 7px 10px;
 }
@@ -300,7 +338,7 @@ export default {
 .th-thread {
   width: 100%;
   height: 65px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #e9e9e9;
 }
 
 .th-thread th {
@@ -323,7 +361,7 @@ export default {
 }
 
 .th-thread .colum-container {
-  border-right: 1px solid #ccc;
+  border-right: 1px solid #d0d0d0;
 }
 
 .th-thread .colum-container .table-colum-title {
@@ -331,37 +369,58 @@ export default {
   font-weight: bold;
   height: 32px;
   line-height: 32px;
+  font-weight: 600;
 }
 
 .th-thread .colum-container .table-filter {
   display: flex;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #d0d0d0;
   width: 100%;
 }
 .th-thread .colum-container .table-filter .filter-criteria {
   background-color: #ffffff;
   text-align: center;
   height: 100%;
-  min-width: 31px;
-  border-right: 1px solid #ccc;
-  /* border-top: 1px solid #ccc; */
+  min-width: 33px;
+  border-right: 1px solid #d0d0d0;
+  border-left: 1px solid #d0d0d0;
   line-height: 32px;
   cursor: pointer;
   margin: 0;
   outline: none;
+  margin-left: 1px;
 }
 
-.th-thread .colum-container .table-filter .filter-text {
+.th-thread .colum-container .filter-text {
   padding: 0px;
   width: calc(100% - 32px);
   outline: none;
   border: none;
-  /* border-top: 1px solid #ccc; */
+  /* border-top: 1px solid #e9e9e9; */
   padding: 8px;
+}
+
+.th-thread .colum-container .filter-text:focus {
+  border: 1px solid blue;
+  border-bottom: none;
+}
+
+.th-thread .store-status {
+  min-width: 150px;
+  width: 150px;
+}
+
+.th-thread .colum-container .status-filter {
+  border: 1px solid #e9e9e9;
+  border-bottom: 0px;
+  width: calc(100% - 20px);
 }
 
 .is-select {
   background-color: #e2e4f1 !important;
+  border: none !important;
+  border-top: 1px solid #f2e3b2 !important;
+  border-bottom: 1px solid #f2e3b2 !important;
 }
 /* ------------------------------------------------------- */
 </style>>
