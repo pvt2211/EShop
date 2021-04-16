@@ -8,7 +8,7 @@
       @handleAdd="handleAdd"
       @handleDelete="handleDelete"
     />
-    <Paging />
+    <Paging :currentPage="currentPage" :limit="limit" :countEntities="countStores" @handleGetCurrentPage="handleGetCurrentPage"/>
     <div class="table-container">
       <table class="table">
         <tr class="th-thread">
@@ -60,7 +60,7 @@
 
     <StoreDetail
       :selectStores="selectStores"
-      @handleSaveAndAdd="handleSaveAndAdd"
+      :method="dynamicMethod"
       @handleSave="handleSave"
       @handleClose="handleClose"
       v-if="detailShow"
@@ -94,6 +94,9 @@ export default {
   data() {
     return {
       stores: [],
+      currentPage:1,
+      limit:15,
+      countStores: Number,
       selectStores: [],
       dynamicMethod: "",
       dynamicLink: "",
@@ -143,12 +146,32 @@ export default {
 
   methods: {
     /**
+     * Hàm lấy tổng số bản ghi
+     */
+    getCountData() {
+      axios({
+        method: "get",
+        url: this.urlLink + '/' + 'count',
+      })
+        .then((res) => {
+          this.countStores = res.data;
+        })
+        .catch((res) => {
+          console.log(res);
+        });
+    },
+    /**
      * Hàm lấy dữ liệu
      */
     getData() {
+      // var params = {
+      //   positionStart: this.limit,
+      //   offSet: this.positionStart,
+      // };
       axios({
         method: "get",
         url: this.urlLink,
+        // params:params,
       })
         .then((res) => {
           this.stores = res.data;
@@ -160,36 +183,64 @@ export default {
           console.log(res);
         });
     },
-
+    /**
+     * Hàm lắng nghe lấy trang hiện tại từ component paging
+     */
+    handleGetCurrentPage(positionStart,limit) {
+      this.positionStart = positionStart;
+      this.limit = limit;
+      // this.getData();
+    },
+    /**
+     * Hàm lắng nghe nút xóa từ sự kiện xóa của component ButtonBar
+     */
     handleDelete() {
       this.deleteShow = true;
     },
-
+    /**
+     * Hàm lắng nghe nút thêm từ sự kiện thêm của component ButtonBar
+     */
     handleAdd() {
       this.resetSelect();
       this.detailShow = true;
       this.dynamicMethod = "post";
     },
-
+    /**
+     * Hàm lắng nghe nút tải lại từ sự kiện tải lại của component ButtonBar
+     */
     handleReload() {
       this.getData();
       this.resetSelect();
     },
-
+    /**
+     * Hàm lắng nghe nút sửa từ sự kiện sửa của component ButtonBar
+     */
     handleEdit() {
       this.detailShow = true;
       this.dynamicMethod = "put";
     },
-
-    handleDuplicate() {},
-
+    /**
+     * Hàm lắng nghe nút nhân bản lại từ sự kiện nhân bản của component ButtonBar
+     */
+    handleDuplicate() {
+      this.dynamicMethod = "post";
+      this.detailShow = true;
+    },
+    /**
+     * Hàm lắng nghe sự kiện lưu từ component StoreDetail
+     * <param name="store">Đối tượng cần thực hiện lưu gửi lên serve<param>
+     * <param name="saveAndAddState">Trạng thái nút lưu và thêm mới<param>
+     */
     handleSave(store, saveAndAddState) {
+      // lấy link API
       var urlLink = "";
       if (this.dynamicMethod == "put") {
         urlLink = this.urlLink + "/" + this.selectStores[0].StoreId;
       } else {
+        store.Status = 0;
         urlLink = this.urlLink;
       }
+      //Thực hiện lưu gửi request lên serve
       axios({
         method: this.dynamicMethod,
         url: urlLink,
@@ -198,6 +249,7 @@ export default {
           "Content-Type": "application/json",
         },
       })
+      //Sự kiện xảy ra khi request thành công
         .then(() => {
           this.getData();
           this.resetSelect();
@@ -207,58 +259,45 @@ export default {
             this.dynamicMethod = "post";
           }
         })
+        //Sự kiện xảy ra khi request thất bại
         .catch((res) => {
-          console.log(res);
+          console.log(res.response);
         });
     },
-
-    handleSaveAndAdd(store) {
-      var urlLink = "";
-      if (this.dynamicMethod == "put") {
-        urlLink = this.urlLink + "/" + this.selectStores[0].StoreId;
-      } else {
-        urlLink = this.urlLink;
-      }
-      axios({
-        method: this.dynamicMethod,
-        url: urlLink,
-        data: store,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then(() => {
-        this.getData();
-        this.resetSelect();
-      })
-      .catch((res) => {
-        console.log(res);
-      });
-    },
-
+    /**
+     * Lắng nghe sự kiện xác nhận xóa từ component DeleteDialog
+     */
     handleConfirmDelete() {
+      //Gửi request để xóa
       if (this.selectStores.length >= 1) {
         this.selectStores.forEach((selectStore) => {
           axios({
             method: "delete",
             url: this.urlLink + "/" + selectStore.StoreId,
           })
+          //Sự iện xảy ra khi xóa thành công
             .then(() => {
               this.getData();
               this.resetSelect();
               this.deleteShow = false;
             })
+            //Sự kiện xáy ra khi request thất bại
             .catch((res) => {
               console.log(res);
             });
         });
       }
     },
-
+    /**
+     * Lắng nghe sự kiện hủy từ các component con
+     */
     handleClose() {
       this.detailShow = false;
       this.deleteShow = false;
     },
+    /**
+     * Sự kiện xảy ra khi click vào hàng trong bảng
+     */
     trOnClick(store, index) {
       if (this.stores[index].isSelect == false) {
         event.currentTarget.classList.add("is-select");
@@ -274,7 +313,9 @@ export default {
       this.stores[index].isSelect = !this.stores[index].isSelect;
       this.store = store;
     },
-
+    /**
+     * Hàm reset lại data
+     */
     resetSelect() {
       this.selectStores = [];
       this.getTrs.forEach((tr) => {
@@ -284,6 +325,9 @@ export default {
   },
 
   computed: {
+    /**
+     * lấy element row
+     */
     getTrs() {
       var trs = document.getElementsByClassName("table-tr");
       return trs;
@@ -292,11 +336,18 @@ export default {
 
   created() {
     this.getData();
+    this.getCountData();
+  },
+
+  mounted() {
   },
 
   filters: {
+    /**
+     * Hiển thị status của cửa hàng ra đúng 
+     */
     filterStatus(param) {
-      if (param == 1) {
+      if (param == 0) {
         return "Đang hoạt động";
       } else {
         return "Ngừng hoạt động";

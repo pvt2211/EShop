@@ -35,28 +35,42 @@ export default {
     },
 
     methods: {
+        /**
+         * Sự kiện trả về cho component cha khi click nút thêm mới
+         */
         addOnClick() {
             this.$emit('handleAdd');
         },
-
+        /**
+         * Sự kiện trả về cho component cha khi click nút xóa
+         */
         deleteOnClick() {
             this.$emit('handleDelete');
         },
-
+        /**
+         * Sự kiện trả về cho component cha khi click nút reset
+         */
         reloadOnClick() {
             this.$emit('handleReload');
         },
-
+        /**
+         * Sự kiện trả về cho component cha khi click nút nhân bản
+         */
         duplicateOnClick() {
             this.$emit('handleDuplicate');
         },
-
+        /**
+         * Sự kiện trả về cho component cha khi click nút sửa
+         */
         editOnClick() {
             this.$emit('handleEdit');
         },
     },
 
     computed: {
+        /**
+         * Giá trị để disable nút xóa
+         */
         deleteDisable() {
             if (this.selectEntities == null) {
                 return true;
@@ -68,7 +82,9 @@ export default {
                 return false;
             }
         },
-
+        /**
+         * Giá trị để disable nút sửa
+         */
         editDisable() {
             if (this.selectEntities == null) {
                 return true;

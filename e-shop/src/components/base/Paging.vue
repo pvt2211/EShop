@@ -8,8 +8,8 @@
         <div class="btn-icon back-icon"></div>
       </div>
       <div class="paging-text">Trang</div>
-      <input type="text" value="1" class="paging-input" />
-      <div class="paging-text">trên 1</div>
+      <input type="text" v-model="currentPage" class="paging-input" @keydown.enter="getCurrentPage"/>
+      <div class="paging-text"> trên {{ totalPage }}</div>
       <div class="paging-button">
         <div class="btn-icon next-icon"></div>
       </div>
@@ -17,21 +17,59 @@
         <div class="btn-icon last-icon"></div>
       </div>
       <div class="paging-button"><div class="btn-icon paging-reload-icon"></div></div>
-      <select name="pagingLimit" class="paging-limit">
-        <option value="15">15</option>
-        <option value="25">25</option>
-        <option value="50" selected>50</option>
-        <option value="100">100</option>
+      <select class="paging-limit" v-model="limit">
+        <option v-for="option in options" :key="option" :value="option">{{ option }}</option>
       </select>
     </div>
-    <div class="right-paging">Hiển thị 1 - 6 trên 6 kết quả</div>
+    <div class="right-paging">Hiển thị {{ positionFirstCurrentEntity  }} - {{ positionLastCurrentEntity }} trên {{ countEntities }} kết quả</div>
   </div>
 </template>
 
 <script>
 export default {
-  setup() {},
-};
+  props: ['countEntities'],
+  data() {
+    return {
+      options:[15,25,50,100],
+      currentPage:1,
+      limit:15,
+    }
+  },
+
+  methods: {
+    /**
+     * Hàm trả về cho component cha khi gọi đến trang hiện tại
+     */
+    getCurrentPage() {
+      this.$emit('handleGetCurrentPage',this.positionFirstCurrentEntity,this.limit);
+    }
+  },
+
+  computed: {
+    //Tổng số trang
+    totalPage() {
+      return Math.ceil(this.countEntities / this.limit)
+    },
+    //vị trí bắt đầu hiện tại trên tổng số entities
+    positionFirstCurrentEntity() {
+      if (this.currentPage == 1) {
+        return 1;
+      }
+      else {
+        return ( this.currentPage - 1 ) * this.limit;
+      }
+    },
+    //vị trí kết thúc hiện tại trên tổng số entities
+    positionLastCurrentEntity() {
+      return this.currentPage * this.limit;
+    },
+  },
+
+  created() {
+    this.litmit = 15;
+    this.currentPage = 1;
+  }
+}
 </script>
 
 <style scoped>

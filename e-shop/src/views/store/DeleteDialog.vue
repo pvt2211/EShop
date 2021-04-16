@@ -34,16 +34,24 @@ export default {
         selectStores:Array,
     },
     methods: {
+        /**
+         * Sự kiện trả về cho component cha khi click hủy
+         */
         closeOnClick() {
             this.$emit('handleClose');
         },
-
+        /**
+         * Sự kiện trả về cho component cha khi click xác nhận xóa
+         */
         deleteOnClick() {
             this.$emit('handleConfirmDelete')
         }
     },
 
     computed: {
+        /**
+         * Giá trị hiển thị khi muốn xóa
+         */
         entityDelete() {
             if (this.selectStores.length == 1) {
                 return this.selectStores[0].StoreCode;
@@ -51,7 +59,9 @@ export default {
                 return "các cửa hàng đã chọn";
             }
         },
-
+        /**
+         * Giá trị để css thuộc tính
+         */
         isBold() {
             if (this.selectStores.length == 1) {
                 return true;

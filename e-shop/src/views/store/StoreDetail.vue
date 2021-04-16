@@ -3,7 +3,9 @@
     <div class="dialog-modal"></div>
     <div class="form-container">
       <div class="form-header">
-        <div class="form-header-title"><span>Thêm mới cửa hàng</span></div>
+        <div class="form-header-title">
+          <span>{{ formTitleDisplay }}</span>
+        </div>
         <div class="close-btn" @click="closeOnClick">
           <font-awesome-icon :icon="['fas', 'times']" />
         </div>
@@ -14,6 +16,7 @@
             >Mã cửa hàng <span class="red-color">*</span></label
           >
           <input
+            id="required"
             class="form-input"
             required
             type="text"
@@ -84,11 +87,11 @@
         <div class="row-1">
           <div class="col-1-2">
             <label class="form-label" for="PhoneNumber">Số điện thoại</label>
-            <input class="form-input mr-15" type="text" name="PhoneNumber" />
+            <input v-model="store.PhoneNumber" class="form-input mr-15" type="text" name="PhoneNumber" />
           </div>
           <div class="col-1-2">
             <label class="form-label" for="StoreTaxCode">Mã số thuế</label>
-            <input class="form-input" type="text" name="StoreTaxCode" />
+            <input v-model="store.StoreTaxCode" class="form-input" type="text" name="StoreTaxCode" />
           </div>
         </div>
         <div class="row-1">
@@ -124,7 +127,6 @@
               class="form-select-container"
             >
               <input
-                
                 class="select-input"
                 type="text"
                 v-model="province.ProvinceName"
@@ -148,7 +150,6 @@
               class="form-select-container"
             >
               <input
-                
                 class="select-input"
                 type="text"
                 v-model="district.DistrictName"
@@ -173,12 +174,7 @@
               @click="select.Ward = !select.Ward"
               class="form-select-container"
             >
-              <input
-                
-                class="select-input"
-                type="text"
-                v-model="ward.WardName"
-              />
+              <input class="select-input" type="text" v-model="ward.WardName" />
               <ul v-if="select.Ward" class="select-option-container">
                 <li
                   @click="optionWardOnClick(ward)"
@@ -199,6 +195,20 @@
               type="text"
               name="District"
             />
+          </div>
+        </div>
+        <div class="row-1" v-if="showStatus">
+          <div class="col-1-2">
+            <label class="form-label"></label>
+            <div class="form-checkbox">
+              <input
+              type="checkbox"
+              id="status"
+              v-model="store.Status"
+              @click="checkBoxOnClick"
+            />
+            <label> Ngừng hoạt động</label>
+            </div>
           </div>
         </div>
       </div>
@@ -245,6 +255,7 @@ export default {
   },
   props: {
     selectStores: Array,
+    method: String,
   },
 
   data() {
@@ -261,20 +272,28 @@ export default {
       district: {},
       wards: [],
       ward: {},
+      test:{},
     };
   },
 
   methods: {
+    /**
+     * Hàm trả ra cho component cha sự kiện hủy
+     */
     closeOnClick() {
       this.$emit("handleClose");
     },
-
+    /**
+     * Hàm ra cho component cha sự kiện lưu
+     * param name: <saveAndAddState> trạng thái lưu và thêm mới
+     */
     saveOnClick(saveAndAddState) {
       var isValid = this.validateForm();
       if (isValid == true) {
         this.$emit("handleSave", this.store, saveAndAddState);
         if (saveAndAddState == true) {
           this.$refs["StoreCode"].focus();
+          this.clearAddress();
         }
       }
       /// Focus ô nhập chưa đúng
@@ -282,14 +301,9 @@ export default {
         document.getElementsByClassName("blur")[0].focus();
       }
     },
-
-    saveAndAddOnClick() {
-      var isValid = this.validateForm();
-      if (isValid == true) {
-        this.$emit("handleSaveAndAdd", this.store);
-      }
-    },
-
+    /**
+     * Sự kiện blur và cảnh báo khi chưa nhập vào các trường cần nhập
+     */
     onBlur(param, propertyName) {
       if (param == null || param == "") {
         this.exclamation[propertyName] = true;
@@ -299,11 +313,13 @@ export default {
         event.currentTarget.classList.remove("blur");
       }
     },
-
+    /**
+     * Hàm validate Form
+     */
     validateForm() {
       var isValid = true;
-      // var isDuplicate = this.checkDuplicateStore(this.store);
       // if (isDuplicate == true) {
+      //   console.log(isDuplicate);
       //   this.exclamation.StoreCode = true;
       //   this.notification.StoreCode = true;
       //   document.querySelector('[name="StoreCode"]').classList.add("blur");
@@ -330,33 +346,66 @@ export default {
       }
       return isValid;
     },
-
-    checkDuplicateStore(store) {
-      axios({
-        method: "get",
-        url: "https://localhost:44399/api/v1/stores/valid",
-        data: store,
-      })
-        .then((res) => {
-          return res;
+    /**
+     * Hàm check trùng mã cửa hàng
+     */
+    checkDuplicateStore() {
+      if (this.method == "post") {
+        var params = {
+          StoreCode : this.store.StoreCode,
+        }
+        axios({
+          method: "get",
+          url: "https://localhost:44399/api/v1/stores/code",
+          param: params,
+        }).then((res) => {
+          this.test = res.data;
+        }) .catch((res) => {
+          console.log(res.response);
         })
-        .catch((res) => {
-          console.log(res);
-        });
+      }
     },
-
+    /**
+     * Hàm lấy giá trị trạng thái cửa hàng
+     */
+    checkBoxOnClick() {
+      if (this.store.Status == true) {
+        this.store.Status = 0;
+      }
+      else {
+        this.store.Status = 1;
+      }
+    },
+    /**
+     * hàm show ra hiển thị cảnh báo khi chưa nhập trường hoặc mã bị trùng
+     */
     showNotification(param) {
       this.notification[param] = true;
     },
-
+    /**
+     * hàm ẩn  cảnh báo khi chưa nhập trường hoặc mã bị trùng
+     */
     hideNotification(param) {
       this.notification[param] = false;
     },
 
-    handleCountry(e) {
-      this.filterCountry = e;
+    /**
+     * Hàm clear các data địa chỉ
+     */
+    clearAddress() {
+      (this.countrys = []),
+        (this.provinces = []),
+        (this.districts = []),
+        (this.wards = []),
+        (this.country = {}),
+        (this.province = {}),
+        (this.district = {}),
+        (this.ward = {});
     },
 
+    /**
+     * Sự kiện xảy ra khi chọn dự liệu trong ô quốc gia
+     */
     optionCountryOnClick(country) {
       this.country = country;
       this.store.CountryId = country.CountryId;
@@ -365,7 +414,9 @@ export default {
       this.ward = {};
       this.getProvinces();
     },
-
+    /**
+     * Sự kiện xảy ra khi chọn dự liệu trong tỉnh thành
+     */
     optionProvinceOnClick(Province) {
       this.province = Province;
       this.store.ProvinceId = Province.ProvinceId;
@@ -373,19 +424,26 @@ export default {
       this.ward = {};
       this.getDistricts();
     },
-
+    /**
+     * Sự kiện xảy ra khi chọn dự liệu trong ô quận huyện
+     */
     optionDistrictOnClick(district) {
       this.district = district;
       this.store.DistrictId = district.DistrictId;
       this.ward = {};
       this.getWards();
     },
-
+    /**
+     * Sự kiện xảy ra khi chọn dự liệu trong ô phường/xã
+     */
     optionWardOnClick(ward) {
       this.ward = ward;
       this.store.WardId = ward.WardId;
     },
 
+    /**
+     * Hàm lấy danh sách quốc gia
+     */
     getCountrys() {
       axios({
         method: "get",
@@ -399,13 +457,16 @@ export default {
         });
     },
 
+    /**
+     * Hàm lấy danh sách tỉnh thành theo quốc gia đã chọn
+     */
     getProvinces() {
       var params = {
         CountryId: this.store.CountryId,
       };
       axios({
         method: "get",
-        url: "https://localhost:44399/api/v1/Provinces",
+        url: "https://localhost:44399/api/v1/Provinces/a",
         params: params,
       })
         .then((res) => {
@@ -416,14 +477,16 @@ export default {
         });
     },
 
+    /**
+     * Hàm lấy danh sách quận/huyện theo tỉnh thành đã chọn
+     */
     getDistricts() {
-      console.log(this.store);
       var params = {
         ProvinceId: this.store.ProvinceId,
       };
       axios({
         method: "get",
-        url: "https://localhost:44399/api/v1/Districts",
+        url: "https://localhost:44399/api/v1/Districts/a",
         params: params,
       })
         .then((res) => {
@@ -434,13 +497,16 @@ export default {
         });
     },
 
+    /**
+     * Hàm lấy danh sach phường xã theo quận/huyện đã chọn
+     */
     getWards() {
       var params = {
         DistrictId: this.store.DistrictId,
       };
       axios({
         method: "get",
-        url: "https://localhost:44399/api/v1/Wards",
+        url: "https://localhost:44399/api/v1/Wards/a",
         params: params,
       })
         .then((res) => {
@@ -453,60 +519,71 @@ export default {
   },
 
   created() {
+    /**
+     * Khởi tạo lấy danh sách quốc gia và quốc gia đã chọn
+     */
     this.getCountrys();
-    if (this.store.CountryId != null && this.store.CountryId !="") {
-       axios({
-      method: "get",
-      url: "https://localhost:44399/api/v1/countrys/" + this.store.CountryId,
-    })
-      .then((res) => {
-        this.country = res.data;
+    if (this.store.CountryId) {
+      axios({
+        method: "get",
+        url: "https://localhost:44399/api/v1/countrys/" + this.store.CountryId,
       })
-      .catch((res) => {
-        console.log(res);
-      });
+        .then((res) => {
+          this.country = res.data;
+        })
+        .catch((res) => {
+          console.log(res);
+        });
       this.getProvinces();
     }
-   
-    if (this.store.ProvinceId != null && this.store.ProvinceId !="") {
-       axios({
-      method: "get",
-      url: "https://localhost:44399/api/v1/provinces/" + this.store.ProvinceId,
-    })
-      .then((res) => {
-        this.province = res.data;
+    /**
+     * Khởi tạo lấy danh sách tỉnh/ thành theo quốc gia đã chọn và tỉnh thành đã chọn
+     */
+    if (this.store.ProvinceId) {
+      axios({
+        method: "get",
+        url:
+          "https://localhost:44399/api/v1/provinces/" + this.store.ProvinceId,
       })
-      .catch((res) => {
-        console.log(res);
-      });
+        .then((res) => {
+          this.province = res.data;
+        })
+        .catch((res) => {
+          console.log(res);
+        });
       this.getDistricts();
     }
-
-    if (this.store.District != null && this.store.District !="") {
-       axios({
-      method: "get",
-      url: "https://localhost:44399/api/v1/districts/" + this.store.District,
-    })
-      .then((res) => {
-        this.district = res.data;
+    /**
+     * Khởi tạo lấy danh sách quận/huyện theo tỉnh/thành đã chọn và quận/huyện đã chọn
+     */
+    if (this.store.DistrictId) {
+      axios({
+        method: "get",
+        url:
+          "https://localhost:44399/api/v1/districts/" + this.store.DistrictId,
       })
-      .catch((res) => {
-        console.log(res);
-      });
+        .then((res) => {
+          this.district = res.data;
+        })
+        .catch((res) => {
+          console.log(res);
+        });
       this.getWards();
     }
-
-    if (this.store.WardId != null && this.store.WardId !="") {
-       axios({
-      method: "get",
-      url: "https://localhost:44399/api/v1/countrys/" + this.store.WardId,
-    })
-      .then((res) => {
-        this.ward = res.data;
+    /**
+     * Khởi tạo lấy danh sách phường/xã theo quận huyện đã chọn và phường/xã đã chọn
+     */
+    if (this.store.WardId) {
+      axios({
+        method: "get",
+        url: "https://localhost:44399/api/v1/wards/" + this.store.WardId,
       })
-      .catch((res) => {
-        console.log(res);
-      });
+        .then((res) => {
+          this.ward = res.data;
+        })
+        .catch((res) => {
+          console.log(res);
+        });
     }
   },
 
@@ -525,33 +602,22 @@ export default {
       }
     },
 
-    // provinces() {
-    //   if (this.store.CountryId == null || this.store.CountryId == "") {
-    //     return [];
-    //   } else {
-    //     var params = {
-    //       Id: this.store.CountryId,
-    //     };
-    //     var temp = [];
-    //     axios({
-    //       method: "get",
-    //       url: "https://localhost:44399/api/v1/Provinces/a",
-    //       params: params,
-    //     }).then(res =>{
-    //       temp = res.data;
-    //     }).catch(res => {
-    //       console.log(res);
-    //     })
-    //     return temp;
-    //   }
-    // },
-    // filteredList() {
-    //   if (this.filterCountry) {
-    //     return this.list.filter(e => e.toLowerCase().indexOf(this.filterInput.toLowerCase()) !== -1)
-    //   } else {
-    //     return this.list
-    //   }
-    // }
+    formTitleDisplay() {
+      if (this.method == "put") {
+        return "Sửa cửa hàng";
+      } else {
+        return "Thêm mới cửa hàng";
+      }
+    },
+
+   showStatus() {
+     if (this.method == "put") {
+       return true;
+     }
+     else {
+       return false;
+     }
+   }
   },
 };
 </script>
@@ -563,7 +629,7 @@ export default {
   border-radius: 4px;
   background-color: #ffffff;
   z-index: 999;
-  height: 486px;
+  min-height: 486px;
 }
 
 .form-container .form-content {
@@ -571,6 +637,7 @@ export default {
   padding: 16px 16px 0px;
   width: calc(100% - 32px);
   flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 
 .form-container .form-content .row-1,
@@ -593,6 +660,22 @@ export default {
   text-overflow: ellipsis;
   line-height: 35px;
   min-width: 105px;
+}
+
+.form-container .form-content .row-1 .form-checkbox {
+  height: calc(100% - 4px);
+  width: 100%;
+  font-family: Roboto, Tahoma, sans-serif;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+}
+
+#status {
+  margin: 0;
+  margin-right: 8px;
+  color: #2b3173;
+  border-color: #2b3173;
 }
 
 .form-container .form-content .row-1 .form-input {
