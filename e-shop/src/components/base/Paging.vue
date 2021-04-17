@@ -2,74 +2,143 @@
   <div class="paging">
     <div class="left-paging">
       <div class="paging-button">
-        <div class="btn-icon first-icon"></div>
+        <div class="btn-icon first-icon" @click="firstOnClick"></div>
       </div>
       <div class="paging-button">
-        <div class="btn-icon back-icon"></div>
+        <div class="btn-icon back-icon" @click="backOnClick"></div>
       </div>
       <div class="paging-text">Trang</div>
-      <input type="text" v-model="currentPage" class="paging-input" @keydown.enter="getCurrentPage"/>
-      <div class="paging-text"> trên {{ totalPage }}</div>
+      <input type="number" v-model="currentPage" class="paging-input" />
+      <div class="paging-text">trên {{ totalPage }}</div>
       <div class="paging-button">
-        <div class="btn-icon next-icon"></div>
+        <div class="btn-icon next-icon" @click="nextOnClick"></div>
       </div>
       <div class="paging-button">
-        <div class="btn-icon last-icon"></div>
+        <div class="btn-icon last-icon" @click="lastOnClick"></div>
       </div>
-      <div class="paging-button"><div class="btn-icon paging-reload-icon"></div></div>
+      <div class="paging-button">
+        <div class="btn-icon paging-reload-icon" @click="reloadOnClick"></div>
+      </div>
       <select class="paging-limit" v-model="limit">
-        <option v-for="option in options" :key="option" :value="option">{{ option }}</option>
+        <option v-for="option in options" :key="option" :value="option">
+          {{ option }}
+        </option>
       </select>
     </div>
-    <div class="right-paging">Hiển thị {{ positionFirstCurrentEntity  }} - {{ positionLastCurrentEntity }} trên {{ countEntities }} kết quả</div>
+    <div class="right-paging">
+      Hiển thị {{ positionStart }} - {{ positionEnd }} trên
+      {{ countEntities }} kết quả
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['countEntities'],
+  props: ["countEntities"],
   data() {
     return {
-      options:[15,25,50,100],
-      currentPage:1,
-      limit:15,
-    }
+      options: [15, 25, 50, 100],
+      currentPage: 1,
+      limit: 25,
+    };
   },
 
   methods: {
     /**
      * Hàm trả về cho component cha khi gọi đến trang hiện tại
      */
-    getCurrentPage() {
-      this.$emit('handleGetCurrentPage',this.positionFirstCurrentEntity,this.limit);
-    }
+    /**
+     * Sự kiện xảy ra khi bấm nút trang đầu tiên
+     */
+    firstOnClick() {
+      this.currentPage = 1;
+    },
+    /**
+     * Sự kiện xảy ra khi bấm nút lùi trang
+     */
+    backOnClick() {
+      if (this.currentPage == 1) {
+        this.currentPage = 1;
+      } else {
+        this.currentPage -= 1;
+      }
+    },
+    /**
+     * Sự kiện xảy ra khi bấm nút sang trang
+     */
+    nextOnClick() {
+      if (this.currentPage == this.totalPage) {
+        this.currentPage = this.totalPage;
+      } else {
+        this.currentPage += 1;
+      }
+    },
+    /**
+     * Sự kiện xảy ra khi bấm nút trang cuối
+     */
+    lastOnClick() {
+      this.currentPage = this.totalPage;
+    },
+    /**
+     * Sự kiện xảy ra khi bấm nút reload
+     */
+    reloadOnClick() {
+      if (this.currentPage > this.totalPage) {
+        this.currentPage = this.totalPage;
+      }
+      this.$emit("handleGetCurrentPage", this.positionStart, this.limit);
+    },
+
+    /**
+     * Hàm xử lí input trang chỉ xử lí dữ liệu là số
+     */
+
   },
 
   computed: {
     //Tổng số trang
     totalPage() {
-      return Math.ceil(this.countEntities / this.limit)
+      return Math.ceil(this.countEntities / this.limit);
     },
     //vị trí bắt đầu hiện tại trên tổng số entities
-    positionFirstCurrentEntity() {
+    positionStart() {
       if (this.currentPage == 1) {
         return 1;
-      }
-      else {
-        return ( this.currentPage - 1 ) * this.limit;
+      } else {
+        return (this.currentPage - 1) * this.limit;
       }
     },
     //vị trí kết thúc hiện tại trên tổng số entities
-    positionLastCurrentEntity() {
-      return this.currentPage * this.limit;
+    positionEnd() {
+      if (this.currentPage == this.totalPage) {
+        return this.countEntities;
+      } else {
+        return this.currentPage * this.limit;
+      }
     },
   },
 
   created() {
     this.litmit = 15;
     this.currentPage = 1;
-  }
-}
+  },
+
+  watch: {
+    currentPage(newCurrentPage) {
+      if (newCurrentPage > this.totalPage) {
+        this.currentPage = this.totalPage;
+      }
+      if (newCurrentPage <= 0) {
+        this.currentPage = 1;
+      }
+      this.$emit("handleGetCurrentPage", this.positionStart, this.limit);
+    },
+
+    litmit(newLimit, oldLimit) {
+      console.log(newLimit, oldLimit);
+    },
+  },
+};
 </script>
 
 <style scoped>

@@ -8,7 +8,10 @@
       @handleAdd="handleAdd"
       @handleDelete="handleDelete"
     />
-    <Paging :currentPage="currentPage" :limit="limit" :countEntities="countStores" @handleGetCurrentPage="handleGetCurrentPage"/>
+    <Paging
+      :countEntities="countStores"
+      @handleGetCurrentPage="handleGetCurrentPage"
+    />
     <div class="table-container">
       <table class="table">
         <tr class="th-thread">
@@ -26,16 +29,21 @@
               <div class="filter-criteria">
                 {{ storeDisplay.FilterCriteria }}
               </div>
-              <input type="text" class="filter-text" />
+              <input type="text" class="filter-text" v-model="storefilters[storeDisplay.PropertyName]" @keypress.enter="filterStore()"/>
             </div>
           </th>
           <th class="colum-container store-status">
             <div class="table-colum-title">Trạng thái</div>
-            <input
+            <select
               type="text"
               class="filter-text status-filter"
               value="Tất cả"
-            />
+              v-model="storefilters.Status"
+            >
+            <option value="2">Tất cả</option>
+            <option value="1">Ngừng hoạt động</option>
+            <option value="0">Đang hoạt động</option>
+            </select>
           </th>
         </tr>
         <tr
@@ -94,8 +102,8 @@ export default {
   data() {
     return {
       stores: [],
-      currentPage:1,
-      limit:15,
+      positionStart: 1,
+      limit: 25,
       countStores: Number,
       selectStores: [],
       dynamicMethod: "",
@@ -103,6 +111,13 @@ export default {
       urlLink: "https://localhost:44399/api/v1/Stores",
       detailShow: false,
       deleteShow: false,
+      storefilters:{
+        StoreCode:"",
+        StoreName:"",
+        Address:"",
+        PhonNumber:"",
+        Status:2
+      },
       storeDisplays: [
         {
           PropertyName: "StoreCode",
@@ -151,7 +166,7 @@ export default {
     getCountData() {
       axios({
         method: "get",
-        url: this.urlLink + '/' + 'count',
+        url: this.urlLink + "/" + "count",
       })
         .then((res) => {
           this.countStores = res.data;
@@ -164,14 +179,14 @@ export default {
      * Hàm lấy dữ liệu
      */
     getData() {
-      // var params = {
-      //   positionStart: this.limit,
-      //   offSet: this.positionStart,
-      // };
+      var params = {
+        positionStart: this.positionStart,
+        offSet: this.limit,
+      };
       axios({
         method: "get",
-        url: this.urlLink,
-        // params:params,
+        url: this.urlLink + "/page",
+        params: params,
       })
         .then((res) => {
           this.stores = res.data;
@@ -186,10 +201,11 @@ export default {
     /**
      * Hàm lắng nghe lấy trang hiện tại từ component paging
      */
-    handleGetCurrentPage(positionStart,limit) {
+    handleGetCurrentPage(positionStart, limit) {
       this.positionStart = positionStart;
       this.limit = limit;
-      // this.getData();
+      this.resetSelect(); 
+      this.getData();
     },
     /**
      * Hàm lắng nghe nút xóa từ sự kiện xóa của component ButtonBar
@@ -235,6 +251,11 @@ export default {
       // lấy link API
       var urlLink = "";
       if (this.dynamicMethod == "put") {
+        if (store.Status == true) {
+          store.Status = 1;
+        } else {
+          store.Status = 0;
+        }
         urlLink = this.urlLink + "/" + this.selectStores[0].StoreId;
       } else {
         store.Status = 0;
@@ -249,14 +270,18 @@ export default {
           "Content-Type": "application/json",
         },
       })
-      //Sự kiện xảy ra khi request thành công
+        //Sự kiện xảy ra khi request thành công
         .then(() => {
-          this.getData();
-          this.resetSelect();
+          // this.getData();
+          if (this.dynamicMethod == "post") {
+            this.stores.unshift(store);
+            this.resetSelect();
+          }
           if (saveAndAddState == false) {
             this.detailShow = false;
           } else {
             this.dynamicMethod = "post";
+            this.resetSelect();
           }
         })
         //Sự kiện xảy ra khi request thất bại
@@ -275,7 +300,7 @@ export default {
             method: "delete",
             url: this.urlLink + "/" + selectStore.StoreId,
           })
-          //Sự iện xảy ra khi xóa thành công
+            //Sự iện xảy ra khi xóa thành công
             .then(() => {
               this.getData();
               this.resetSelect();
@@ -322,6 +347,33 @@ export default {
         tr.classList.remove("is-select");
       });
     },
+    /**
+     * Ham filter
+     */
+    filterStore() {
+      var params= {
+        storeCode: this.storefilters.StoreCode,
+        storeName: this.storefilters.StoreName,
+        address: this.storefilters.Address,
+        phoneNumber: this.storefilters.StoreCode,
+        status: this.storefilters.Status,
+      };
+      console.log(params)
+      axios({
+        method: "get",
+        url: this.urlLink + "/filter",
+        params: params,
+      })
+        .then((res) => {
+          this.stores = res.data;
+          for (let i = 0; i < res.data.length; i++) {
+            this.stores[i].isSelect = false;
+          }
+        })
+        .catch((res) => {
+          console.log(res);
+        });
+    },
   },
 
   computed: {
@@ -339,12 +391,11 @@ export default {
     this.getCountData();
   },
 
-  mounted() {
-  },
+  mounted() {},
 
   filters: {
     /**
-     * Hiển thị status của cửa hàng ra đúng 
+     * Hiển thị status của cửa hàng ra đúng
      */
     filterStatus(param) {
       if (param == 0) {
@@ -352,6 +403,12 @@ export default {
       } else {
         return "Ngừng hoạt động";
       }
+    },
+  },
+
+  watch: {
+    storefilters(moi) {
+      console.log(moi);
     },
   },
 };
@@ -464,7 +521,7 @@ export default {
 .th-thread .colum-container .status-filter {
   border: 1px solid #e9e9e9;
   border-bottom: 0px;
-  width: calc(100% - 20px);
+  width: calc(100%);
 }
 
 .is-select {

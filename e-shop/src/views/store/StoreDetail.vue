@@ -105,6 +105,7 @@
                 class="select-input"
                 type="text"
                 v-model="country.CountryName"
+                disabled
               />
               <ul v-if="select.Country" class="select-option-container">
                 <li
@@ -130,6 +131,8 @@
                 class="select-input"
                 type="text"
                 v-model="province.ProvinceName"
+                disabled
+
               />
               <ul v-if="select.Province" class="select-option-container">
                 <li
@@ -153,6 +156,8 @@
                 class="select-input"
                 type="text"
                 v-model="district.DistrictName"
+                disabled
+
               />
               <ul v-if="select.District" class="select-option-container">
                 <li
