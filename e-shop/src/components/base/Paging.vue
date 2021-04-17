@@ -19,7 +19,7 @@
       <div class="paging-button">
         <div class="btn-icon paging-reload-icon" @click="reloadOnClick"></div>
       </div>
-      <select class="paging-limit" v-model="limit">
+      <select class="paging-limit" v-model="limit" @change="reloadOnClick">
         <option v-for="option in options" :key="option" :value="option">
           {{ option }}
         </option>
@@ -88,7 +88,6 @@ export default {
       }
       this.$emit("handleGetCurrentPage", this.positionStart, this.limit);
     },
-
     /**
      * Hàm xử lí input trang chỉ xử lí dữ liệu là số
      */

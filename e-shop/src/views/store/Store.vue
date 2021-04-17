@@ -29,7 +29,8 @@
               <div class="filter-criteria">
                 {{ storeDisplay.FilterCriteria }}
               </div>
-              <input type="text" class="filter-text" v-model="storefilters[storeDisplay.PropertyName]" @keypress.enter="filterStore()"/>
+              <input type="text" class="filter-text" v-model="storefilters[storeDisplay.PropertyName]" 
+              @keypress.enter="filterStore()"/>
             </div>
           </th>
           <th class="colum-container store-status">
@@ -39,6 +40,7 @@
               class="filter-text status-filter"
               value="Tất cả"
               v-model="storefilters.Status"
+              @change="filterStore()"
             >
             <option value="2">Tất cả</option>
             <option value="1">Ngừng hoạt động</option>
