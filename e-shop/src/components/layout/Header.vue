@@ -10,7 +10,7 @@
         <img class="default-img" src="../../assets/img/Avartar.png" />
       </div>
       <div class="user">
-        <div class="user-name">Nguyễn Văn Mạnh</div>
+        <div class="user-name">Phùng Văn Tùng</div>
         <div class="select-header-arrow"></div>
       </div>
       <div class="support-page-btn primary-background"></div>

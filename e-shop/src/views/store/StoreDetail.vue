@@ -107,6 +107,7 @@
                 v-model="country.CountryName"
                 disabled
               />
+              <div class="select-header-arrow2"></div>
               <ul v-if="select.Country" class="select-option-container">
                 <li
                   @click="optionCountryOnClick(country)"
@@ -132,8 +133,8 @@
                 type="text"
                 v-model="province.ProvinceName"
                 disabled
-
               />
+              <div class="select-header-arrow2"></div>
               <ul v-if="select.Province" class="select-option-container">
                 <li
                   @click="optionProvinceOnClick(province)"
@@ -151,15 +152,16 @@
             <div
               @click="select.District = !select.District"
               class="form-select-container"
+              style="width:177px"
             >
               <input
                 class="select-input"
                 type="text"
                 v-model="district.DistrictName"
                 disabled
-
               />
-              <ul v-if="select.District" class="select-option-container">
+              <div class="select-header-arrow2"></div>
+              <ul v-if="select.District" class="select-option-container" style="width:177px">
                 <li
                   @click="optionDistrictOnClick(district)"
                   v-for="district in districts"
@@ -322,6 +324,8 @@ export default {
      * Hàm validate Form
      */
     validateForm() {
+      var isDuplicate = this.checkDuplicateStore();
+      console.log(isDuplicate);
       var isValid = true;
       // if (isDuplicate == true) {
       //   console.log(isDuplicate);
@@ -355,6 +359,8 @@ export default {
      * Hàm check trùng mã cửa hàng
      */
     checkDuplicateStore() {
+      var isDuplicate = false
+      var test={};
       if (this.method == "post") {
         var params = {
           StoreCode : this.store.StoreCode,
@@ -364,11 +370,14 @@ export default {
           url: "https://localhost:44399/api/v1/stores/code",
           param: params,
         }).then((res) => {
-          this.test = res.data;
+          test = res
+          console.log(test);
         }) .catch((res) => {
           console.log(res.response);
         })
       }
+      console.log(test);
+      return isDuplicate;
     },
     /**
      * Hàm lấy giá trị trạng thái cửa hàng
@@ -700,6 +709,8 @@ export default {
   border: 1px solid #ccc;
   border-radius: 3px;
   height: 31px;
+  display: flex;
+  cursor: pointer;
 }
 
 .select-option-container {
@@ -775,5 +786,13 @@ export default {
   width: 200px;
   padding: 6px 10px;
   font-size: 13px;
+}
+
+.select-header-arrow2{
+  background-image: url("../../assets/img/arrow-down-line.png");
+  background-repeat: no-repeat;
+  background-position: 8px;
+  height: 100%;
+  min-width: 24px;
 }
 </style>

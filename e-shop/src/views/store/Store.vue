@@ -278,7 +278,7 @@ export default {
           if (this.dynamicMethod == "post") {
             this.stores.unshift(store);
             this.resetSelect();
-          }
+          } 
           if (saveAndAddState == false) {
             this.detailShow = false;
           } else {

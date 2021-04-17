@@ -3,7 +3,7 @@
         <div class="dialog-modal"></div>
         <div class="delete-dialog-container">
             <div class="form-header">
-                <div class="form-header-title"><span>Xóa dữ liêụ</span></div>
+                <div class="form-header-title"><span>Xóa dữ liệu</span></div>
                 <div class="close-btn" @click="closeOnClick"><font-awesome-icon :icon="['fas', 'times']" /></div>
             </div>
             <div class="delte-dialog-content">
@@ -108,5 +108,6 @@ export default {
 
 .is-bold {
     font-weight: bold;
+    color: red;
 }
 </style>

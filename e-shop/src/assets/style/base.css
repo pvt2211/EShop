@@ -12,6 +12,14 @@ body {
     height: 100%;
 }
 
+.select-header-arrow {
+  background-image: url("../../assets/img/arrow-down-line.png");
+  background-repeat: no-repeat;
+  background-position: 8px;
+  height: 100%;
+  min-width: 24px;
+}
+
 .flex {
     display: flex;
 }
